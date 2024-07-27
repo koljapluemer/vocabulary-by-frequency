@@ -39,7 +39,7 @@ def main():
                     if len(line.strip().split(":")) > 1:
                         source = line.split(":")[1].replace("*", "").strip()
                         if source:
-                            print(source)
+
                             vocab['native'] = source
                 # word_type
                 if '*word_type:*' in line:
@@ -87,13 +87,13 @@ def main():
                         vocab['pronunciation'] = pronunciation
                 # drawing
                 if '*drawing:*' in line:
-                    print("drawing property exists")
+
                     drawing = get_sub_items_from_following_lines(lines, index+1)
                     if drawing:
                         vocab['drawing'] = drawing              
                 # images
                 if '*images*:' in line:
-                    print("image property exists")
+
                     images = get_sub_items_from_following_lines(lines, index+1)
                     if images:
                         vocab['images'] = images
@@ -102,9 +102,7 @@ def main():
                 
             if valid_vocab_file:
                 vocabs.append(vocab)
-                print(vocab)
-            else:
-                print(f"File {f} is not a valid vocab file")
+
 
     # generate exercises
     exercises = generate_exercises(vocabs)
@@ -144,7 +142,7 @@ def get_sub_items_from_following_lines(lines, start_index):
     items = []
     for i in range(start_index, len(lines)):
         if lines[i].startswith("-"):
-            print("breaking at", lines[i])
+
             break
         # use regex to kill everything like "- a)" or "-" or "- b)"
         clean_line = re.sub(r'-\s[a-z]\)', '', lines[i])
@@ -255,7 +253,7 @@ def generate_exercises_target_pronounce(vocab):
         template = template.replace("$TARGET", v['target'])
         template = template.replace("$FILE", v['name'])
         exercises[f'Pronounce {v["target"]}'] = template
-    print("number of pronunciation exercises:", len(exercises))
+
     return exercises
 
 def generate_exercises_with_prompt(vocab):
@@ -308,7 +306,7 @@ def generate_pick_correct_image(vocabs):
                 template = template.replace("$DATE", datetime.now().strftime("%d.%m.%Y"))
                 template = template.replace("$TARGET", v['target'])
                 template = template.replace("$FILE", v['name'])
-                print(images)
+
                 
                 # template = template.replace("$IMAGE1", images[0].replace("]]", "|200]]|"))
                 # template = template.replace("$IMAGE2", images[1].replace("]]", "|200]]"))
