@@ -5,12 +5,11 @@ q-keywords: frequent-words
 auto-generate: true
 ---
 
-- **What is this in Egyptian Arabic?**
+## **What is *$TARGET* in Egyptian Arabic?**
 
-$IMAGE
-
+ 
 ---
 
-## [[$FILE|$TARGET]]
+## [[$FILE|$NATIVE]]
 
 ![[$FILE]]

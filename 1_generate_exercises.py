@@ -151,10 +151,10 @@ def get_sub_items_from_following_lines(lines, start_index):
 
 def generate_exercises(vocabs):
     exercises = {}
-    sentence_exercises = generate_exercises_sentence_prompt_double(vocabs)
-    exercises.update(sentence_exercises)
-
+    exercises.update(generate_exercises_sentence_prompt_double(vocabs))
     exercises.update(generate_exercises_image_to_target(vocabs))
+    exercises.update(generate_native_to_target(vocabs))
+    exercises.update(generate_target_to_native(vocabs))
 
     return exercises
 
@@ -192,6 +192,32 @@ def generate_exercises_image_to_target(vocabs):
             template = template.replace("$FILE", v['name'])
             template = template.replace("$IMAGE", img)
             exercises[f'Image Exercise {uuid.uuid4()}'] = template
+    return exercises
+
+def generate_native_to_target(vocabs):
+    exercises = {}
+    for v in vocabs:
+        # use template_native_to_target
+        with open("assets/template_native_to_target.md", 'r') as file:
+            template = file.read()
+        template = template.replace("$DATE", datetime.now().strftime("%d.%m.%Y"))
+        template = template.replace("$TARGET", v['target'])
+        template = template.replace("$NATIVE", v['native'])
+        template = template.replace("$FILE", v['name'])
+        exercises[f'Native to Target {v["native"]}'] = template
+    return exercises
+
+def generate_target_to_native(vocabs):
+    exercises = {}
+    for v in vocabs:
+        # use template_target_to_native
+        with open("assets/template_target_to_native.md", 'r') as file:
+            template = file.read()
+        template = template.replace("$DATE", datetime.now().strftime("%d.%m.%Y"))
+        template = template.replace("$TARGET", v['target'])
+        template = template.replace("$NATIVE", v['native'])
+        template = template.replace("$FILE", v['name'])
+        exercises[f'Target to Native {v["target"]}'] = template
     return exercises
 
 if __name__ == "__main__":

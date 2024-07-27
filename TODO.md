@@ -5,3 +5,8 @@
     - maybe after all ad in all the words, but only make some todos
     - or just deal with rectifying it, it's all language work after all...
 - check if drawing is eventually bothering to get extracted
+- build a kind of intepreter for these search-and-replaces from templates (like $FILE) — they're entirely predictable (at least so far, wait for shit like "lets have 3 wrong images")
+- find a way to balance exercise types: some stuff (imagine per-letter cloze) can delete thousands of exercises everytime, drawing based is much rarer... (especially when drawings aren't detected lol)
+
+
+- add more types by writing functions akin to `def generate_exercises_sentence_prompt_double(vocabs):` and then adding them like `exercises.update(generate_native_to_target(vocabs))`
