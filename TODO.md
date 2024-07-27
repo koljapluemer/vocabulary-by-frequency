@@ -4,3 +4,4 @@
 - what to do with overlaps, such as "I create 'buy' as a sibling of 'spend' and later its in the frequency list but with as 'buying' or some shit"
     - maybe after all ad in all the words, but only make some todos
     - or just deal with rectifying it, it's all language work after all...
+- check if drawing is eventually bothering to get extracted
