@@ -1,6 +1,6 @@
-- implement mechanism for users to give feedback
-- remove dead code
-- check all files for insufficient inline-comments
-- refactor 1 function
-- think about accessibility strategies
-- think about SEO strategies
+- autofill skeleton notes after editing
+    - auto-alias target and native
+    - add missing sibling/parent stuff
+- what to do with overlaps, such as "I create 'buy' as a sibling of 'spend' and later its in the frequency list but with as 'buying' or some shit"
+    - maybe after all ad in all the words, but only make some todos
+    - or just deal with rectifying it, it's all language work after all...
