@@ -7,7 +7,7 @@ import uuid
 OBSIDIAN_LEARN_PATH_DATA = "/home/b/MEGA/Obsidian/Zettelkasten/FrequentWordsLearning/Data"
 OBSIDIAN_LEARN_PATH_EXERCISES = "/home/b/MEGA/Obsidian/Zettelkasten/FrequentWordsLearning/Exercises"
 
-NUMBER_OF_DESIRED_EXERCISES = 50
+NUMBER_OF_DESIRED_EXERCISES = 100
 
 def main():
     # create paths if they don't exist
@@ -111,7 +111,7 @@ def main():
     # save
     save_exercises(exercises)
 
-def save_exercises(exercises):
+def save_exercises(exercise_collections):
     nr_of_undone_exercises = 0
     # count how many files in exercises that are "todo" and not "todo-done"
     for f in os.listdir(OBSIDIAN_LEARN_PATH_EXERCISES):
@@ -123,16 +123,20 @@ def save_exercises(exercises):
 
     # fill up with exercises
     nr_of_exercises_to_add = max(0, NUMBER_OF_DESIRED_EXERCISES - nr_of_undone_exercises)
-    keys = list(exercises.keys())
-    for i in range(nr_of_exercises_to_add):
-        # pick a random key, use it, then remove from keys list
-        # if list empty, break
-        if not keys:
-            break
-        key = random.choice(keys)
-        keys.remove(key)
-        with open(os.path.join(OBSIDIAN_LEARN_PATH_EXERCISES, key + ".md"), 'w') as file:
-            file.write(exercises[key])
+    used_keys = []
+    # while exercises missing, pick a random exercise_collection, pick a random element from it, and then remove that from the list
+    while nr_of_exercises_to_add > 0:
+        exercise_collection = random.choice(exercise_collections)
+        keys_as_list = list(exercise_collection.keys())
+        if len(keys_as_list) == 0:
+            continue
+        random_key = random.choice(keys_as_list)
+        if random_key in used_keys:
+            continue
+        used_keys.append(random_key)
+        with open(os.path.join(OBSIDIAN_LEARN_PATH_EXERCISES, random_key + ".md"), 'w') as file:
+            file.write(exercise_collection[random_key])
+        nr_of_exercises_to_add -= 1
 
 
 
@@ -150,17 +154,18 @@ def get_sub_items_from_following_lines(lines, start_index):
     return items
 
 def generate_exercises(vocabs):
-    exercises = {}
-    exercises.update(generate_exercises_sentence_prompt_double(vocabs))
-    exercises.update(generate_exercises_sentence_prompt_single(vocabs))
-    exercises.update(generate_exercises_image_to_target(vocabs))
-    exercises.update(generate_native_to_target(vocabs))
-    exercises.update(generate_target_to_native(vocabs))
-    exercises.update(generate_pick_correct_image(vocabs))
-    exercises.update(generate_exercises_with_prompt(vocabs))
-    exercises.update(generate_exercises_target_pronounce(vocabs))
+    exercise_collections = [
+        generate_exercises_sentence_prompt_double(vocabs),
+        generate_exercises_sentence_prompt_single(vocabs),
+        generate_exercises_image_to_target(vocabs),
+        generate_native_to_target(vocabs),
+        generate_target_to_native(vocabs),
+        generate_pick_correct_image(vocabs),
+        generate_exercises_with_prompt(vocabs),
+        generate_exercises_target_pronounce(vocabs)
+    ]
 
-    return exercises
+    return exercise_collections
 
 def generate_exercises_sentence_prompt_double(vocabs):
     exercises = {}
@@ -262,6 +267,7 @@ def generate_exercises_with_prompt(vocab):
     }
     exercises = {}
     for _ in range(NUMBER_OF_DESIRED_EXERCISES):
+        print("looping")
         # pick a random vocab, and a random prompt
         # use template_prompt
         with open("assets/template_prompt.md", 'r') as file:
