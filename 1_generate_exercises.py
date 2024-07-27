@@ -158,6 +158,7 @@ def generate_exercises(vocabs):
     exercises.update(generate_target_to_native(vocabs))
     exercises.update(generate_pick_correct_image(vocabs))
     exercises.update(generate_exercises_with_prompt(vocabs))
+    exercises.update(generate_exercises_target_pronounce(vocabs))
 
     return exercises
 
@@ -239,7 +240,7 @@ def generate_target_to_native(vocabs):
 
 def generate_exercises_target_pronounce(vocab):
     # pronunciation field required, replace target and $file
-    vocabs_with_pronunciation = [v for v in vocabs if 'pronunciation' in v]
+    vocabs_with_pronunciation = [v for v in vocab if 'pronunciation' in v]
     exercises = {}
     for v in vocabs_with_pronunciation:
         # use template_target_pronounce
@@ -249,6 +250,8 @@ def generate_exercises_target_pronounce(vocab):
         template = template.replace("$TARGET", v['target'])
         template = template.replace("$FILE", v['name'])
         exercises[f'Pronounce {v["target"]}'] = template
+    print("number of pronunciation exercises:", len(exercises))
+    return exercises
 
 def generate_exercises_with_prompt(vocab):
     prompts = {
