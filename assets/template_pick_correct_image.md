@@ -1,5 +1,5 @@
 ---
-q-type: todo
+q-type: learn
 created-at: $DATE
 q-keywords: frequent-words
 auto-generate: true

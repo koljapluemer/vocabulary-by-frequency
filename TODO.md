@@ -11,3 +11,6 @@
 
 
 - add more types by writing functions akin to `def generate_exercises_sentence_prompt_double(vocabs):` and then adding them like `exercises.update(generate_native_to_target(vocabs))`
+
+
+- clean up all the print bs
