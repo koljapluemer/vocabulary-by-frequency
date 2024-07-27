@@ -1,0 +1,15 @@
+{
+  "title": "Vocabulary By Frequency",
+  "subtitle": "",
+  "status": "alpha",
+  "showOnPortfolio": false,
+  "showAboveFold": false,
+  "imageAltProperty": "Screenshot of Vocabulary By Frequency",
+  "languages": [],
+  "links": [
+    {
+      "title": "See on GitHub",
+      "url": "https://github.com/koljapluemer/vocabulary-by-frequency"
+    }
+  ]
+}
