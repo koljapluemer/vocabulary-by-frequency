@@ -152,6 +152,7 @@ def get_sub_items_from_following_lines(lines, start_index):
 def generate_exercises(vocabs):
     exercises = {}
     exercises.update(generate_exercises_sentence_prompt_double(vocabs))
+    exercises.update(generate_exercises_sentence_prompt_single(vocabs))
     exercises.update(generate_exercises_image_to_target(vocabs))
     exercises.update(generate_native_to_target(vocabs))
     exercises.update(generate_target_to_native(vocabs))
@@ -160,7 +161,6 @@ def generate_exercises(vocabs):
     return exercises
 
 def generate_exercises_sentence_prompt_double(vocabs):
-    # 10 times
     exercises = {}
     for i in range(NUMBER_OF_DESIRED_EXERCISES):
         # pick 2 random vocabs, and make a card prompting to make a sentence with them
@@ -178,6 +178,21 @@ def generate_exercises_sentence_prompt_double(vocabs):
         template = template.replace("$WORD2_FILE", word2['name'])
         template = template.replace("$WORD2_TARGET", word2['target'])
         exercises[f'Sentence Prompt {word1["target"]} and {word2["target"]}'] = template
+    return exercises
+
+def generate_exercises_sentence_prompt_single(vocabs):
+    exercises = {}
+    for i in range(NUMBER_OF_DESIRED_EXERCISES):
+        # pick 1 random vocab, and make a card prompting to make a sentence with it
+        # use template_sentence_single
+        with open("assets/template_sentence_single.md", 'r') as file:
+            template = file.read()
+        # replace $DATE, $WORD_FILE, $WORD_TARGET
+        word = random.choice(vocabs)
+        template = template.replace("$DATE", datetime.now().strftime("%d.%m.%Y"))
+        template = template.replace("$FILE", word['name'])
+        template = template.replace("$TARGET", word['target'])
+        exercises[f'Sentence Prompt {word["target"]}'] = template
     return exercises
 
 def generate_exercises_image_to_target(vocabs):
