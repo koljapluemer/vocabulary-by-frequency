@@ -155,6 +155,7 @@ def generate_exercises(vocabs):
     exercises.update(generate_exercises_image_to_target(vocabs))
     exercises.update(generate_native_to_target(vocabs))
     exercises.update(generate_target_to_native(vocabs))
+    exercises.update(generate_pick_correct_image(vocabs))
 
     return exercises
 
@@ -219,6 +220,48 @@ def generate_target_to_native(vocabs):
         template = template.replace("$FILE", v['name'])
         exercises[f'Target to Native {v["target"]}'] = template
     return exercises
+
+def generate_pick_correct_image(vocabs):
+    vocabs_with_images = [v for v in vocabs if 'images' in v]
+    exercises = {}
+    for v in vocabs_with_images:
+        for img in v['images']:
+            # pick 3 random images from *other* vocab with images
+            images = [img]
+            for _ in range(3):
+                other_v = random.choice(vocabs_with_images)
+                if other_v == v:
+                    continue
+                other_img = random.choice(other_v['images'])
+                if other_img in images:
+                    continue
+                images.append(other_img)
+            # if list is at least 2 img
+            if len(images) > 1:
+                # shuffle
+                random.shuffle(images)
+                # use template_pick_correct_image
+                with open("assets/template_pick_correct_image.md", 'r') as file:
+                    template = file.read()
+                template = template.replace("$DATE", datetime.now().strftime("%d.%m.%Y"))
+                template = template.replace("$TARGET", v['target'])
+                template = template.replace("$FILE", v['name'])
+                print(images)
+                
+                # template = template.replace("$IMAGE1", images[0].replace("]]", "|200]]|"))
+                # template = template.replace("$IMAGE2", images[1].replace("]]", "|200]]"))
+                # template = template.replace("$IMAGE3", images[2].replace("]]", "|200]]"))
+                # template = template.replace("$IMAGE4", images[3].replace("]]", "|200]]"))
+                for j in range(4):
+                    # first check if list goes so far, if not, just delete the placeholder
+                    if j >= len(images):
+                        template = template.replace(f"$IMAGE{j+1}", "")
+                    else:
+                        img = images[j]
+                        template = template.replace(f"$IMAGE{j+1}", images[j].replace("]]", "|200]]|"))
+                exercises[f'Which image is {v["target"]}﹖'] = template
+    return exercises
+                
 
 if __name__ == "__main__":
     main()
