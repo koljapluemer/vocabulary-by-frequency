@@ -14,3 +14,4 @@
 
 
 - clean up all the print bs
+- we have a problem with stuff being linked to previously existing files, like tell → TELL. Rare, but annoying

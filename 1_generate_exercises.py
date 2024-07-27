@@ -7,7 +7,7 @@ import uuid
 OBSIDIAN_LEARN_PATH_DATA = "/home/b/MEGA/Obsidian/Zettelkasten/FrequentWordsLearning/Data"
 OBSIDIAN_LEARN_PATH_EXERCISES = "/home/b/MEGA/Obsidian/Zettelkasten/FrequentWordsLearning/Exercises"
 
-NUMBER_OF_DESIRED_EXERCISES = 100
+NUMBER_OF_DESIRED_EXERCISES = 200
 
 def main():
     # create paths if they don't exist
@@ -27,28 +27,26 @@ def main():
             # loop lines
             lines = content.split("\n")
             for index, line in enumerate(lines):
-                if '*target:*' in line:
+                if '*target' in line:
                     if len(line.strip().split(":")) > 1:
                         target = line.split(":")[1].replace("*", "").strip()
                         if target:
-                            # print(target)
                             vocab['target'] = target
                             valid_vocab_file = True
                 # same process for "native"
-                if '*native:*' in line:
+                if '*native' in line:
                     if len(line.strip().split(":")) > 1:
                         source = line.split(":")[1].replace("*", "").strip()
                         if source:
-
                             vocab['native'] = source
                 # word_type
-                if '*word_type:*' in line:
+                if '*word_type' in line:
                     if len(line.strip().split(":")) > 1:
                         word_type = line.split(":")[1].replace("*", "").strip()
                         if word_type:
                             vocab['word_type'] = word_type
                 # transliteration
-                if '*transliteration:*' in line:
+                if '*transliteration' in line:
                     if len(line.strip().split(":")) > 1:
                         transliteration = line.split(":")[1].replace("*", "").strip()
                         if transliteration:
@@ -56,50 +54,46 @@ def main():
                 # for the following one's, we're actually interested in the following lines
                 # search for following lines, until it starts with - or doesn't exist
                 # 1) "notes"
-                if '*notes:*' in line:
+                if '*notes' in line:
                     notes = get_sub_items_from_following_lines(lines, index+1)
                     if notes:
                         vocab['notes'] = notes
                 # antonyms
-                if '*antonyms:*' in line:
+                if '*antonyms' in line:
                     antonyms = get_sub_items_from_following_lines(lines, index+1)
                     if antonyms:
                         vocab['antonyms'] = antonyms
                 # siblings
-                if '*siblings:*' in line:
+                if '*siblings' in line:
                     siblings = get_sub_items_from_following_lines(lines, index+1)
                     if siblings:
                         vocab['siblings'] = siblings
                 # parents
-                if '*parents:*' in line:
+                if '*parents' in line:
                     parents = get_sub_items_from_following_lines(lines, index+1)
                     if parents:
                         vocab['parents'] = parents
                 # children
-                if '*children:*' in line:
+                if '*children' in line:
                     children = get_sub_items_from_following_lines(lines, index+1)
                     if children:
                         vocab['children'] = children
                 # pronunciation
-                if '*pronunciation:*' in line:
+                if '*pronunciation' in line:
                     pronunciation = get_sub_items_from_following_lines(lines, index+1)
                     if pronunciation:
                         vocab['pronunciation'] = pronunciation
                 # drawing
-                if '*drawing:*' in line:
-
+                if '*drawing' in line:
                     drawing = get_sub_items_from_following_lines(lines, index+1)
                     if drawing:
                         vocab['drawing'] = drawing              
                 # images
-                if '*images*:' in line:
-
+                if '*images' in line:
                     images = get_sub_items_from_following_lines(lines, index+1)
                     if images:
                         vocab['images'] = images
 
-
-                
             if valid_vocab_file:
                 vocabs.append(vocab)
 
@@ -121,6 +115,7 @@ def save_exercises(exercise_collections):
 
     # fill up with exercises
     nr_of_exercises_to_add = max(0, NUMBER_OF_DESIRED_EXERCISES - nr_of_undone_exercises)
+    print("nr_of_exercises_to_add:", nr_of_exercises_to_add)
     used_keys = []
     # while exercises missing, pick a random exercise_collection, pick a random element from it, and then remove that from the list
     while nr_of_exercises_to_add > 0:
@@ -133,7 +128,8 @@ def save_exercises(exercise_collections):
             continue
         used_keys.append(random_key)
         with open(os.path.join(OBSIDIAN_LEARN_PATH_EXERCISES, random_key + ".md"), 'w') as file:
-            file.write(exercise_collection[random_key])
+            # this replace is a dirty hack because of earlier fuck ups
+            file.write(exercise_collection[random_key].replace(".md", ""))
         nr_of_exercises_to_add -= 1
 
 
@@ -307,11 +303,6 @@ def generate_pick_correct_image(vocabs):
                 template = template.replace("$TARGET", v['target'])
                 template = template.replace("$FILE", v['name'])
 
-                
-                # template = template.replace("$IMAGE1", images[0].replace("]]", "|200]]|"))
-                # template = template.replace("$IMAGE2", images[1].replace("]]", "|200]]"))
-                # template = template.replace("$IMAGE3", images[2].replace("]]", "|200]]"))
-                # template = template.replace("$IMAGE4", images[3].replace("]]", "|200]]"))
                 for j in range(4):
                     # first check if list goes so far, if not, just delete the placeholder
                     if j >= len(images):
