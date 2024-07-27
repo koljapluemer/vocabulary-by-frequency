@@ -157,6 +157,7 @@ def generate_exercises(vocabs):
     exercises.update(generate_native_to_target(vocabs))
     exercises.update(generate_target_to_native(vocabs))
     exercises.update(generate_pick_correct_image(vocabs))
+    exercises.update(generate_exercises_with_prompt(vocabs))
 
     return exercises
 
@@ -235,6 +236,43 @@ def generate_target_to_native(vocabs):
         template = template.replace("$FILE", v['name'])
         exercises[f'Target to Native {v["target"]}'] = template
     return exercises
+
+def generate_exercises_target_pronounce(vocab):
+    # pronunciation field required, replace target and $file
+    vocabs_with_pronunciation = [v for v in vocabs if 'pronunciation' in v]
+    exercises = {}
+    for v in vocabs_with_pronunciation:
+        # use template_target_pronounce
+        with open("assets/template_target_pronounce.md", 'r') as file:
+            template = file.read()
+        template = template.replace("$DATE", datetime.now().strftime("%d.%m.%Y"))
+        template = template.replace("$TARGET", v['target'])
+        template = template.replace("$FILE", v['name'])
+        exercises[f'Pronounce {v["target"]}'] = template
+
+def generate_exercises_with_prompt(vocab):
+    prompts = {
+        "$TARGET — Last Seen":  "When did you last see $TARGET?",
+        "$TARGET — Opinion": "What do you think about $TARGET?",
+        "$TARGET — Explain": "Explain $TARGET in Egyptian Arabic as best as you can:",
+        "$TARGET — Nearest": "What is the $TARGET nearest to you:"
+    }
+    exercises = {}
+    for _ in range(NUMBER_OF_DESIRED_EXERCISES):
+        # pick a random vocab, and a random prompt
+        # use template_prompt
+        with open("assets/template_prompt.md", 'r') as file:
+            template = file.read()
+        # replace $DATE, $TARGET, $FILE, $PROMPT
+        word = random.choice(vocab)
+        prompt_key = random.choice(list(prompts.keys()))
+        prompt = prompts[prompt_key]
+        prompt = prompt.replace("$TARGET", f'[[{word["name"]}|{word["target"]}]]')
+        template = template.replace("$DATE", datetime.now().strftime("%d.%m.%Y"))
+        template = template.replace("$PROMPT", prompt)
+        exercises[prompt_key] = template
+    return exercises
+
 
 def generate_pick_correct_image(vocabs):
     vocabs_with_images = [v for v in vocabs if 'images' in v]

@@ -5,11 +5,9 @@ q-keywords: frequent-words
 auto-generate: true
 ---
 
-## **What is *$TARGET*?**
+## **How do you pronounce *$TARGET* in Egyptian Arabic?**
 
  
 ---
-
-## [[$FILE|$NATIVE]]
 
 ![[$FILE]]

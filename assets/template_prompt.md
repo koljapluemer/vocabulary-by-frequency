@@ -5,11 +5,6 @@ q-keywords: frequent-words
 auto-generate: true
 ---
 
-## **What is *$TARGET*?**
+## $PROMPT
 
- 
----
-
-## [[$FILE|$NATIVE]]
-
-![[$FILE]]
+- 
