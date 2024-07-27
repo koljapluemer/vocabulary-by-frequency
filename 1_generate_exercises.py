@@ -2,10 +2,12 @@ import os
 import random
 import re
 from datetime import datetime
+import uuid
 
 OBSIDIAN_LEARN_PATH_DATA = "/home/b/MEGA/Obsidian/Zettelkasten/FrequentWordsLearning/Data"
 OBSIDIAN_LEARN_PATH_EXERCISES = "/home/b/MEGA/Obsidian/Zettelkasten/FrequentWordsLearning/Exercises"
 
+NUMBER_OF_DESIRED_EXERCISES = 50
 
 def main():
     # create paths if they don't exist
@@ -83,18 +85,19 @@ def main():
                     pronunciation = get_sub_items_from_following_lines(lines, index+1)
                     if pronunciation:
                         vocab['pronunciation'] = pronunciation
+                # drawing
+                if '*drawing:*' in line:
+                    print("drawing property exists")
+                    drawing = get_sub_items_from_following_lines(lines, index+1)
+                    if drawing:
+                        vocab['drawing'] = drawing              
                 # images
                 if '*images*:' in line:
                     print("image property exists")
                     images = get_sub_items_from_following_lines(lines, index+1)
                     if images:
                         vocab['images'] = images
-                # drawing
-                if '*drawing:*' in line:
-                    print("drawing property exists")
-                    drawing = get_sub_items_from_following_lines(lines, index+1)
-                    if drawing:
-                        vocab['drawing'] = drawing
+
 
                 
             if valid_vocab_file:
@@ -109,9 +112,28 @@ def main():
     save_exercises(exercises)
 
 def save_exercises(exercises):
-    for name, content in exercises.items():
-        with open(os.path.join(OBSIDIAN_LEARN_PATH_EXERCISES, name + ".md"), 'w') as file:
-            file.write(content)
+    nr_of_undone_exercises = 0
+    # count how many files in exercises that are "todo" and not "todo-done"
+    for f in os.listdir(OBSIDIAN_LEARN_PATH_EXERCISES):
+        with open(os.path.join(OBSIDIAN_LEARN_PATH_EXERCISES, f), 'r') as file:
+            content = file.read()
+            if "q-type: todo" in content:
+                if not "q-type: todo-done" in content:
+                    nr_of_undone_exercises += 1
+
+    # fill up with exercises
+    nr_of_exercises_to_add = max(0, NUMBER_OF_DESIRED_EXERCISES - nr_of_undone_exercises)
+    keys = list(exercises.keys())
+    for i in range(nr_of_exercises_to_add):
+        # pick a random key, use it, then remove from keys list
+        # if list empty, break
+        if not keys:
+            break
+        key = random.choice(keys)
+        keys.remove(key)
+        with open(os.path.join(OBSIDIAN_LEARN_PATH_EXERCISES, key + ".md"), 'w') as file:
+            file.write(exercises[key])
+
 
 
 def get_sub_items_from_following_lines(lines, start_index):
@@ -132,12 +154,14 @@ def generate_exercises(vocabs):
     sentence_exercises = generate_exercises_sentence_prompt_double(vocabs)
     exercises.update(sentence_exercises)
 
+    exercises.update(generate_exercises_image_to_target(vocabs))
+
     return exercises
 
 def generate_exercises_sentence_prompt_double(vocabs):
     # 10 times
     exercises = {}
-    for i in range(10):
+    for i in range(NUMBER_OF_DESIRED_EXERCISES):
         # pick 2 random vocabs, and make a card prompting to make a sentence with them
         # use template_sentence_double
         with open("assets/template_sentence_double.md", 'r') as file:
@@ -155,6 +179,20 @@ def generate_exercises_sentence_prompt_double(vocabs):
         exercises[f'Sentence Prompt {word1["target"]} and {word2["target"]}'] = template
     return exercises
 
+def generate_exercises_image_to_target(vocabs):
+    vocabs_with_images = [v for v in vocabs if 'images' in v]
+    exercises = {}
+    for v in vocabs_with_images:
+        for img in v['images']:
+            # use template_image_to_target
+            with open("assets/template_image_to_target.md", 'r') as file:
+                template = file.read()
+            template = template.replace("$DATE", datetime.now().strftime("%d.%m.%Y"))
+            template = template.replace("$TARGET", v['target'])
+            template = template.replace("$FILE", v['name'])
+            template = template.replace("$IMAGE", img)
+            exercises[f'Image Exercise {uuid.uuid4()}'] = template
+    return exercises
 
 if __name__ == "__main__":
     main()
