@@ -267,7 +267,6 @@ def generate_exercises_with_prompt(vocab):
     }
     exercises = {}
     for _ in range(NUMBER_OF_DESIRED_EXERCISES):
-        print("looping")
         # pick a random vocab, and a random prompt
         # use template_prompt
         with open("assets/template_prompt.md", 'r') as file:
@@ -279,6 +278,7 @@ def generate_exercises_with_prompt(vocab):
         prompt = prompt.replace("$TARGET", f'[[{word["name"]}|{word["target"]}]]')
         template = template.replace("$DATE", datetime.now().strftime("%d.%m.%Y"))
         template = template.replace("$PROMPT", prompt)
+        prompt_key = prompt_key.replace("$TARGET", word["target"])
         exercises[prompt_key] = template
     return exercises
 
